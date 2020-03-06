@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Sep  8 02:33:22 2019
+
+@author: mangesh.kshirsagar
+"""
+#%%%
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+#%%
+
+"Function to generate random sample data from a given distribution"
+def gen_data(n_sample=50,dist='uniform',random_var=0):
+    """
+    Generates data points for a desired distributions and return as numpy array
+    """
+    
+    if dist=='uniform':
+        d=np.random.random(size=n_sample)
+    if dist=='normal':
+        d=np.random.normal(loc=1-random_var,scale=1+random_var,size=n_sample)
+    if dist=='binomial':
+        d=np.random.binomial(n=10,p=0.5+random_var/10,size=n_sample)
+    if dist=='exponential':
+        d=np.random.exponential(scale=0.5+random_var,size=n_sample)
+    if dist=='poisson':
+        d=np.random.poisson(lam=1.0+random_var,size=n_sample)
+    if dist=='chisquare':
+        d=np.random.chisquare(df=3+int(5*random_var),size=n_sample)
+    if dist=='gamma':
+        d=np.random.gamma(shape=1.0+random_var,scale=0.5+random_var,size=n_sample)
+    if dist=='beta':
+        d=np.random.beta(a=0.5+random_var,b=1.0+random_var,size=n_sample)
+    if dist=='triangular':
+        d=np.random.triangular(left=0.0,mode=np.min([0.5+random_var,1.0]),right=1.0,size=n_sample)
+    if dist=='lognormal':
+        d=np.random.lognormal(mean=1-random_var,sigma=1+random_var,size=n_sample)
+    if dist=='laplace':
+        d=np.random.laplace(scale=0.5+random_var,size=n_sample)
+        
+    # Normalize data
+    d = d+np.abs(d.min())
+    d = d/(d.max()-d.min())
+    
+    return d
+#%%
+"Kernel density plots and histograms to test the generative function"
+for r in [0.1,0.2,0.3,0.4,0.5]:
+    test=gen_data(dist='beta',random_var=r)+gen_data(dist='exponential',random_var=r)
+    sns.kdeplot(test,lw=2,c=np.random.choice(['k','orange','blue','green','red']))
+    plt.grid(True)
+plt.show()
+#%%
+dist_list=['uniform','normal','binomial','exponential','poisson','chisquare','gamma','beta','triangular','lognormal','laplace']
+for d in dist_list:
+    data = gen_data(n_sample=1000,dist=d)
+    plt.title(f"Plot of {d}",fontsize=15)
+    sns.distplot(data,kde=False,bins=20)
+    plt.show()
+    #%%
